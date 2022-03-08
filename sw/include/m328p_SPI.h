@@ -192,6 +192,10 @@ namespace m328p
             
             // Enable slave mode
             MSTR_Bit::write(Mode::SLAVE);
+            
+            // Clear SPI Interrupt Flag by reading SPSR and SPDR
+            SPSR::read();
+            SPDR::read();            
         }
         
         ///@brief Active waiting for transmission complete
@@ -258,6 +262,14 @@ namespace m328p
         typedef GPIOPin<Port::B, PORTB3> MOSI_Pin;
         typedef GPIOPin<Port::B, PORTB4> MISO_Pin;
         typedef GPIOPin<Port::B, PORTB5> SCK_Pin;
+        
+        
+        /**
+        @brief SPI transmission complete interrupt handler
+        @note This method has to be defined in a separate cpp file. Otherwise, interrupt vector table won't be populated
+        */
+        static void handleInterrupt() asm("__vector_17") __attribute__((signal, used, externally_visible));
+
     };
 }
 #endif
